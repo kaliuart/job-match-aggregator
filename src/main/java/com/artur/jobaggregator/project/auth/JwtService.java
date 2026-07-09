@@ -1,5 +1,6 @@
 package com.artur.jobaggregator.project.auth;
 
+import com.artur.jobaggregator.project.exception.badrequest.InvalidTokenException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -42,7 +43,7 @@ public class JwtService {
             return true;
 
         } catch (Exception e) {
-            return false;
+            throw new InvalidTokenException("Invalid or expired JWT token");
         }
     }
 

@@ -60,8 +60,4 @@ public class UserService {
             logger.info("User successfully saved");
         }
     }
-
-    public void logoutUser() {
-
-    }
 }

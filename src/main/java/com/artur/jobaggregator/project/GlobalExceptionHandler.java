@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.method.MethodValidationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -58,8 +59,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponseDto> handleBadRequest(BadRequestException e, HttpServletRequest request) {
+    @ExceptionHandler(exception = {
+            BadRequestException.class,
+            MethodValidationException.class
+    })
+
+    public ResponseEntity<ErrorResponseDto> handleBadRequest(Exception e, HttpServletRequest request) {
         ErrorResponseDto error = new ErrorResponseDto(
                 "bad request",
                 e.getMessage(),
