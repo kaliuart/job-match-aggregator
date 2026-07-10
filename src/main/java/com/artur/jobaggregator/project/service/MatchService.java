@@ -1,9 +1,9 @@
 package com.artur.jobaggregator.project.service;
 
-import com.artur.jobaggregator.project.dto.MatchRequestDto;
-import com.artur.jobaggregator.project.dto.MatchResultDto;
+import com.artur.jobaggregator.project.dto.matching.MatchRequestDto;
+import com.artur.jobaggregator.project.dto.matching.MatchResultDto;
 import com.artur.jobaggregator.project.entity.JobEntity;
-import com.artur.jobaggregator.project.dto.GeminiResponseDto;
+import com.artur.jobaggregator.project.dto.api.GeminiResponseDto;
 import com.artur.jobaggregator.project.exception.externalservice.GeminiResponseEmptyException;
 import com.artur.jobaggregator.project.exception.notfound.JobNotFoundException;
 import com.artur.jobaggregator.project.repository.JobRepository;

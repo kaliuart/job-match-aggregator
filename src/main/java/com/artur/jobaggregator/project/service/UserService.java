@@ -1,8 +1,8 @@
 package com.artur.jobaggregator.project.service;
 
 import com.artur.jobaggregator.project.auth.JwtService;
-import com.artur.jobaggregator.project.dto.LoginRequestDto;
-import com.artur.jobaggregator.project.dto.RegisterRequestDto;
+import com.artur.jobaggregator.project.dto.auth.LoginRequestDto;
+import com.artur.jobaggregator.project.dto.auth.RegisterRequestDto;
 import com.artur.jobaggregator.project.entity.UserEntity;
 import com.artur.jobaggregator.project.exception.badrequest.InvalidCredentialsException;
 import com.artur.jobaggregator.project.exception.conflict.EmailAlreadyExistsException;

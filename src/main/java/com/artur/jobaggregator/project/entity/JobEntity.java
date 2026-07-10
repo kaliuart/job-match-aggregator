@@ -25,7 +25,7 @@ public class JobEntity {
     @Column(unique = true)
     private String slug;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> tags;
 
     private String title;

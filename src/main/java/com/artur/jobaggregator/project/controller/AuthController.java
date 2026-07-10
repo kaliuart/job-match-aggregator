@@ -1,8 +1,8 @@
 package com.artur.jobaggregator.project.controller;
 
 import com.artur.jobaggregator.project.auth.AuthResponse;
-import com.artur.jobaggregator.project.dto.LoginRequestDto;
-import com.artur.jobaggregator.project.dto.RegisterRequestDto;
+import com.artur.jobaggregator.project.dto.auth.LoginRequestDto;
+import com.artur.jobaggregator.project.dto.auth.RegisterRequestDto;
 import com.artur.jobaggregator.project.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.artur.jobaggregator.project.dto;
+package com.artur.jobaggregator.project.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

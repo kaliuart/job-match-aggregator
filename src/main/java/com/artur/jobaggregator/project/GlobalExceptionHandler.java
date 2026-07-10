@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
                 409,
                 request.getRequestURI()
         );
-        logger.error("Handle" +  e.getClass().getName());
+        logger.error("Handle {}", e.getClass().getName());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
                 404,
                 request.getRequestURI()
         );
-        logger.error("Handle" + e.getClass().getName());
+        logger.error("Handle {}", e.getClass().getName());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
@@ -55,16 +55,12 @@ public class GlobalExceptionHandler {
                 500,
                 request.getRequestURI()
         );
-        logger.error("Handle" + e.getClass().getName());
+        logger.error("Handle {}", e.getClass().getName());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
-    @ExceptionHandler(exception = {
-            BadRequestException.class,
-            MethodArgumentNotValidException.class
-    })
-
-    public ResponseEntity<ErrorResponseDto> handleBadRequest(Exception e, HttpServletRequest request) {
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseDto> handleBadRequest(BadRequestException e, HttpServletRequest request) {
         ErrorResponseDto error = new ErrorResponseDto(
                 "bad request",
                 e.getMessage(),
@@ -72,7 +68,20 @@ public class GlobalExceptionHandler {
                 400,
                 request.getRequestURI()
         );
-        logger.error("Handle" + e.getClass().getName());
+        logger.error("Handle {}", e.getClass().getName());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
+        ErrorResponseDto error = new ErrorResponseDto(
+                "not valid",
+                e.getBindingResult().getFieldErrors().toString(),
+                LocalDateTime.now(),
+                400,
+                request.getRequestURI()
+        );
+        logger.error("Handle {}", e.getClass().getName());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 

@@ -1,4 +1,4 @@
-package com.artur.jobaggregator.project.dto;
+package com.artur.jobaggregator.project.dto.matching;
 
 import lombok.Data;
 

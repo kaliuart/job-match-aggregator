@@ -1,19 +1,23 @@
 package com.artur.jobaggregator.project.service;
 
+import com.artur.jobaggregator.project.dto.api.JobSource;
+import com.artur.jobaggregator.project.dto.api.MuseResponse;
 import com.artur.jobaggregator.project.entity.JobEntity;
 import com.artur.jobaggregator.project.JobMapper;
 import com.artur.jobaggregator.project.exception.externalservice.ArbeitnowResponseEmpyException;
 import com.artur.jobaggregator.project.exception.notfound.JobNotFoundException;
 import com.artur.jobaggregator.project.repository.JobRepository;
-import com.artur.jobaggregator.project.dto.JobResponse;
+import com.artur.jobaggregator.project.dto.api.ArbeitnowResponse;
 import com.artur.jobaggregator.project.dto.JobDto;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
@@ -21,31 +25,28 @@ import java.util.List;
 @Service
 public class JobService {
     private final JobRepository jobRepository;
-    private final RestClient client;
     private final JobMapper jobMapper;
+    private final List<JobSource> jobSources;
 
     @Value("${job-filter.it-keywords}")
     private List<String> keyWords;
 
     private final Logger logger = LoggerFactory.getLogger(JobService.class);
 
-    public JobService(JobRepository jobRepository, RestClient client, JobMapper jobMapper) {
+    public JobService(JobRepository jobRepository, JobMapper jobMapper, List<JobSource> jobSources) {
         this.jobRepository = jobRepository;
-        this.client = client;
         this.jobMapper = jobMapper;
+        this.jobSources = jobSources;
     }
 
+    @Transactional
     public void fetchAndSaveJobs() {
-        JobResponse response = client.get()
-                .uri("https://www.arbeitnow.com/api/job-board-api")
-                .retrieve()
-                .body(JobResponse.class);
 
-        if (response == null || response.getData() == null) {
-            throw new ArbeitnowResponseEmpyException("Arbeitnow response contains no data");
+        List<JobEntity> all = new ArrayList<>();
+        for (JobSource jobSource : jobSources) {
+            all.addAll(jobSource.fetchJobs());
         }
-
-        for (JobEntity job: response.getData()) {
+        for (JobEntity job: all) {
             if (!isItJob(job)) {
                 continue;
             }

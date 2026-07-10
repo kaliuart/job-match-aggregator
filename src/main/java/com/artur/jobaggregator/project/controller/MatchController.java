@@ -1,7 +1,7 @@
 package com.artur.jobaggregator.project.controller;
 
-import com.artur.jobaggregator.project.dto.MatchRequestDto;
-import com.artur.jobaggregator.project.dto.MatchResultDto;
+import com.artur.jobaggregator.project.dto.matching.MatchRequestDto;
+import com.artur.jobaggregator.project.dto.matching.MatchResultDto;
 import com.artur.jobaggregator.project.service.MatchService;
 import org.springframework.web.bind.annotation.*;
 
