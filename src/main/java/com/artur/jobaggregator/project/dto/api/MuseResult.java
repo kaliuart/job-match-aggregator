@@ -1,11 +1,12 @@
 package com.artur.jobaggregator.project.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
 
-@Getter
+@Data
 public class MuseResult {
     //slug
     @JsonProperty("short_name")

@@ -26,7 +26,7 @@ public class MuseSource implements JobSource {
         List<JobEntity> jobEntities = new ArrayList<>();
 
         MuseResponse response = client.get()
-                .uri("https://www.themuse.com/api/public/jobs?page=1&category=Computer%20and%20IT&category=Software%20Engineering")
+                .uri("https://www.themuse.com/api/public/jobs?page=1&category=Software Engineering&category=Computer and IT")
                 .retrieve()
                 .body(MuseResponse.class);
 

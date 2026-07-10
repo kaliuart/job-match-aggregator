@@ -1,5 +1,6 @@
 package com.artur.jobaggregator.project.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class RegisterRequestDto {
 
     @NotBlank
     @Pattern(regexp = "^(\\+420)?[0-9]{9}$")
+    @JsonProperty("phone_number")
     private String phoneNumber;
 
 }

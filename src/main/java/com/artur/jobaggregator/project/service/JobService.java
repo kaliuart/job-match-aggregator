@@ -46,11 +46,11 @@ public class JobService {
             if (!isItJob(job)) {
                 continue;
             }
+            System.out.println(job.getUrl());
 
             Optional<JobEntity> existing = jobRepository.findBySlug(job.getSlug());
 
             if (existing.isPresent()) {
-
                 JobEntity jobEntity = existing.get();
                 if (!jobEntity.equals(job)) {
 
@@ -98,7 +98,7 @@ public class JobService {
                 .toList();
     }
 
-    public boolean isItJob(JobEntity job) {
+     public boolean isItJob(JobEntity job) {
         String title = job.getTitle().toLowerCase();
         List<String> tags = job.getTags().stream().map(tag -> tag.toLowerCase()).toList();
         String slug = job.getSlug().toLowerCase();

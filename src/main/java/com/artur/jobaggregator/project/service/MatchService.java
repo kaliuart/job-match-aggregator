@@ -5,12 +5,14 @@ import com.artur.jobaggregator.project.dto.matching.MatchResultDto;
 import com.artur.jobaggregator.project.entity.JobEntity;
 import com.artur.jobaggregator.project.dto.api.GeminiResponseDto;
 import com.artur.jobaggregator.project.exception.externalservice.GeminiResponseEmptyException;
+import com.artur.jobaggregator.project.exception.externalservice.GeminiUnavailableException;
 import com.artur.jobaggregator.project.exception.notfound.JobNotFoundException;
 import com.artur.jobaggregator.project.repository.JobRepository;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.ObjectMapper;
 
@@ -33,29 +35,32 @@ public class MatchService {
     }
     public MatchResultDto match(MatchRequestDto matchRequest, Long jobId) {
         Map<String, Object> requestBody = getRequestBody(matchRequest,jobId);
+        try {
+            GeminiResponseDto geminiResponse = client
+                    .post()
+                    .uri("https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent")
+                    .header("X-goog-api-key", apiKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .body(GeminiResponseDto.class);
 
-        GeminiResponseDto geminiResponse = client
-                .post()
-                .uri("https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent")
-                .header("X-goog-api-key", apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(requestBody)
-                .retrieve()
-                .body(GeminiResponseDto.class);
+            if (geminiResponse == null || geminiResponse.getCandidates() == null) {
+                throw new GeminiResponseEmptyException("Gemini response contains no data");
+            }
+            String jsonResult = geminiResponse
+                        .getCandidates()
+                        .getFirst()
+                        .getContent()
+                        .getParts()
+                        .getFirst()
+                        .getText();
 
-        if (geminiResponse == null || geminiResponse.getCandidates() == null) {
-            throw new GeminiResponseEmptyException("Gemini response contains no data");
+                return objectMapper.readValue(jsonResult, MatchResultDto.class);
+            }
+        catch (HttpServerErrorException e) {
+            throw new GeminiUnavailableException("Gemini unavailable");
         }
-
-        String jsonResult = geminiResponse
-                .getCandidates()
-                .getFirst()
-                .getContent()
-                .getParts()
-                .getFirst()
-                .getText();
-
-        return objectMapper.readValue(jsonResult, MatchResultDto.class);
 
     }
 
