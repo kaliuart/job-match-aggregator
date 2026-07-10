@@ -6,6 +6,8 @@ import com.artur.jobaggregator.project.dto.api.MuseResult;
 import com.artur.jobaggregator.project.entity.JobEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 
 @Component
 public class JobMapper {
@@ -29,10 +31,26 @@ public class JobMapper {
         jobEntity.setTitle(museResult.getName());
         jobEntity.setCompanyName(museResult.getCompany().getName());
         jobEntity.setDescription(museResult.getContents());
-        jobEntity.setTags(museResult.getCategories().stream()
+
+        List<MuseResult.MuseCategory> categories = museResult.getCategories();
+        jobEntity.setTags(
+                categories == null ? List.of()
+                        : categories.stream()
                         .map(MuseResult.MuseCategory::getName)
-                        .toList());
-        jobEntity.setLocation(museResult.getLocations().getFirst().getName());
+                        .toList()
+        );
+
+        List<MuseResult.Location> locations = museResult.getLocations();
+
+        String location = (locations == null || locations.isEmpty())
+                ? "Not specified"
+                : locations.getFirst().getName();
+        jobEntity.setLocation(location);
+
+        boolean remote = location.toLowerCase().contains("remote")
+                || location.toLowerCase().contains("flexible");
+        jobEntity.setRemote(remote);
+
         jobEntity.setUrl(museResult.getRefs().getLandingPage());
         jobEntity.setSlug(museResult.getShortName());
 

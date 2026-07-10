@@ -1,6 +1,5 @@
 package com.artur.jobaggregator.project.dto.api;
 
-import com.artur.jobaggregator.project.entity.JobEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
