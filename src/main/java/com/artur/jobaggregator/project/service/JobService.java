@@ -13,10 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class JobService {
@@ -35,6 +37,7 @@ public class JobService {
         this.jobSources = jobSources;
     }
 
+    @Scheduled(fixedDelay = 6, timeUnit = TimeUnit.HOURS)
     @Transactional
     public void fetchAndSaveJobs() {
 
@@ -46,8 +49,6 @@ public class JobService {
             if (!isItJob(job)) {
                 continue;
             }
-            System.out.println(job.getUrl());
-
             Optional<JobEntity> existing = jobRepository.findBySlug(job.getSlug());
 
             if (existing.isPresent()) {
@@ -98,7 +99,7 @@ public class JobService {
                 .toList();
     }
 
-     public boolean isItJob(JobEntity job) {
+     private boolean isItJob(JobEntity job) {
         String title = job.getTitle().toLowerCase();
         List<String> tags = job.getTags().stream().map(tag -> tag.toLowerCase()).toList();
         String slug = job.getSlug().toLowerCase();

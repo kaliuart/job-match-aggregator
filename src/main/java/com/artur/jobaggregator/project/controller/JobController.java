@@ -3,11 +3,11 @@ package com.artur.jobaggregator.project.controller;
 import com.artur.jobaggregator.project.dto.JobDto;
 import com.artur.jobaggregator.project.service.JobService;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 
 @RestController
 public class JobController {
@@ -17,22 +17,17 @@ public class JobController {
         this.jobService = jobService;
     }
 
-    @Scheduled(fixedDelay = 6, timeUnit = TimeUnit.HOURS)
-    public void fetchJobs() {
-        jobService.fetchAndSaveJobs();
-    }
-
     @GetMapping("/api/jobs/{id}")
     public JobDto getOne(@PathVariable Long id) {
         return jobService.getJobById(id);
     }
 
-    @GetMapping("api/jobs")
+    @GetMapping("/api/jobs")
     public List<JobDto> getAll() {
         return jobService.getAllJobs();
     }
 
-    @GetMapping("api/jobs/search")
+    @GetMapping("/api/jobs/search")
     public List<JobDto> search(@RequestParam(required = false) String keyword,
                                   @RequestParam(required = false) String location,
                                   @RequestParam(required = false) Boolean remote,

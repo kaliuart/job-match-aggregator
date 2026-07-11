@@ -5,6 +5,8 @@ import com.artur.jobaggregator.project.dto.api.MuseResponse;
 import com.artur.jobaggregator.project.dto.api.MuseResult;
 import com.artur.jobaggregator.project.entity.JobEntity;
 import com.artur.jobaggregator.project.exception.externalservice.MuseResponseEmptyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -13,8 +15,10 @@ import java.util.List;
 
 @Component
 public class MuseSource implements JobSource {
+
     private final RestClient client;
     private final JobMapper jobMapper;
+    private final Logger logger = LoggerFactory.getLogger(MuseSource.class);
 
     public MuseSource(RestClient client, JobMapper jobMapper) {
         this.client = client;
@@ -33,6 +37,8 @@ public class MuseSource implements JobSource {
         if (response == null || response.getResults() == null) {
             throw new MuseResponseEmptyException("Muse response contains no data");
         }
+
+        logger.info("MuseAPI responded successfully");
 
         for(MuseResult job: response.getResults()) {
             jobEntities.add(jobMapper.mapToJobEntityFromMuse(job));

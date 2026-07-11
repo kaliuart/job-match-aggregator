@@ -9,7 +9,10 @@ import com.artur.jobaggregator.project.exception.externalservice.GeminiUnavailab
 import com.artur.jobaggregator.project.exception.notfound.JobNotFoundException;
 import com.artur.jobaggregator.project.repository.JobRepository;
 import org.jsoup.Jsoup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -24,6 +27,7 @@ public class MatchService {
     private final JobRepository jobRepository;
     private final RestClient client;
     private final ObjectMapper objectMapper;
+    private final Logger logger = LoggerFactory.getLogger(MatchService.class);
 
     @Value("${gemini.api-key}")
     private String apiKey;
@@ -33,6 +37,7 @@ public class MatchService {
         this.client = client;
         this.objectMapper = objectMapper;
     }
+    @Cacheable(value = "jobMatches", key = "#jobId + '_' + #matchRequest.resume.hashCode()")
     public MatchResultDto match(MatchRequestDto matchRequest, Long jobId) {
         Map<String, Object> requestBody = getRequestBody(matchRequest,jobId);
         try {
@@ -44,10 +49,12 @@ public class MatchService {
                     .body(requestBody)
                     .retrieve()
                     .body(GeminiResponseDto.class);
-
             if (geminiResponse == null || geminiResponse.getCandidates() == null) {
                 throw new GeminiResponseEmptyException("Gemini response contains no data");
             }
+
+            logger.info("GeminiAPI responded successfully for jobId {}", jobId);
+
             String jsonResult = geminiResponse
                         .getCandidates()
                         .getFirst()
