@@ -2,8 +2,11 @@ package com.artur.jobaggregator.controller;
 
 import com.artur.jobaggregator.dto.JobDto;
 import com.artur.jobaggregator.service.JobService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,22 +26,16 @@ public class JobController {
     }
 
     @GetMapping("/api/jobs")
-    public List<JobDto> getAll() {
-        return jobService.getAllJobs();
+    public PagedModel<JobDto> getAll(@PageableDefault(size = 20, sort = "title") Pageable pageable) {
+        return new PagedModel<>(jobService.getAllJobs(pageable));
     }
 
     @GetMapping("/api/jobs/search")
-    public List<JobDto> search(@RequestParam(required = false) String keyword,
-                                  @RequestParam(required = false) String location,
-                                  @RequestParam(required = false) Boolean remote,
-                                  @RequestParam(defaultValue = "title") String sortBy,
-                                  @RequestParam(defaultValue = "asc") String direction
-    ) {
-        Sort sort = direction.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        return jobService.searchJobs(keyword, location, remote, sort);
+    public PagedModel<JobDto> search(@RequestParam(required = false) String keyword,
+                                     @RequestParam(required = false) String location,
+                                     @RequestParam(required = false) Boolean remote,
+                                     @PageableDefault(size = 20, sort = "title") Pageable pageable) {
+        return new PagedModel<>(jobService.searchJobs(keyword, location, remote, pageable));
     }
 
 }

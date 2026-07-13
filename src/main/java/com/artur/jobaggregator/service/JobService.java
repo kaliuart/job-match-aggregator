@@ -12,6 +12,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -74,11 +76,8 @@ public class JobService {
         }
     }
 
-    public List<JobDto> getAllJobs() {
-        return jobRepository.findAll()
-                .stream()
-                .map(jobMapper::mapToJobDto)
-                .toList();
+    public Page<JobDto> getAllJobs(Pageable pageable) {
+        return jobRepository.findAll(pageable).map(jobMapper::mapToJobDto);
     }
 
     public JobDto getJobById(Long id) {
@@ -92,11 +91,8 @@ public class JobService {
         );
     }
 
-    public List<JobDto> searchJobs(String keyword, String location, Boolean remote, Sort sort) {
-        return jobRepository.search(keyword, location, remote, sort)
-                .stream()
-                .map(jobMapper::mapToJobDto)
-                .toList();
+    public Page<JobDto> searchJobs(String keyword, String location, Boolean remote, Pageable pageable) {
+        return jobRepository.search(keyword, location, remote, pageable).map(jobMapper::mapToJobDto);
     }
 
      private boolean isItJob(JobEntity job) {

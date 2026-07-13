@@ -12,11 +12,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import java.util.Optional;
-import java.util.List;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -52,8 +56,8 @@ class JobServiceTest {
         service.fetchAndSaveJobs();
 
         verify(jobRepository).save(job);
-
     }
+
     @Test
     void fetchAndSaveJobs_existingJob_updatesIt() {
         JobSource source = mock(JobSource.class);
@@ -80,14 +84,11 @@ class JobServiceTest {
         service.fetchAndSaveJobs();
 
         verify(jobRepository).save(existingJob);
-        assertEquals("new title" , existingJob.getTitle());
-
+        assertEquals("new title", existingJob.getTitle());
     }
-
 
     @Test
     void getAllJobs_withJobs_returnsMappedDtos() {
-
         JobEntity entity1 = new JobEntity();
         entity1.setTitle("1 entity");
 
@@ -97,24 +98,26 @@ class JobServiceTest {
         JobEntity entity3 = new JobEntity();
         entity3.setTitle("3 entity");
 
-        List<JobEntity> entities = List.of(entity1, entity2, entity3);
+        Pageable pageable = PageRequest.of(0, 20);
 
-        when(jobRepository.findAll()).thenReturn(entities);
+        when(jobRepository.findAll(pageable))
+                .thenReturn(new PageImpl<>(List.of(entity1, entity2, entity3), pageable, 3));
 
+        Page<JobDto> result = jobService.getAllJobs(pageable);
 
-        List<JobDto> result = jobService.getAllJobs();
-
-        assertEquals("1 entity", result.get(0).getTitle());
-        assertEquals("2 entity", result.get(1).getTitle());
-        assertEquals("3 entity", result.get(2).getTitle());
-
+        assertEquals(3, result.getTotalElements());
+        assertEquals("1 entity", result.getContent().get(0).getTitle());
+        assertEquals("2 entity", result.getContent().get(1).getTitle());
+        assertEquals("3 entity", result.getContent().get(2).getTitle());
     }
 
     @Test
-    void getAllJobs_noJobs_returnsEmptyList() {
-        when(jobRepository.findAll()).thenReturn(List.of());
+    void getAllJobs_noJobs_returnsEmptyPage() {
+        Pageable pageable = PageRequest.of(0, 20);
 
-        List<JobDto> result = jobService.getAllJobs();
+        when(jobRepository.findAll(pageable)).thenReturn(Page.empty(pageable));
+
+        Page<JobDto> result = jobService.getAllJobs(pageable);
 
         assertTrue(result.isEmpty());
     }
@@ -144,30 +147,26 @@ class JobServiceTest {
     @Test
     void searchJobs_matchingCriteria_returnsMappedDtos() {
         String keyword = "java";
-
         String location = "Prague";
-
         Boolean remote = false;
 
-        String sortBy = "title";
-
-        Sort sort = Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("title").descending());
 
         JobEntity job1 = new JobEntity();
-
         job1.setTitle("java");
-
         job1.setRemote(false);
-
         job1.setLocation("Prague");
 
-        when(jobRepository.search(keyword,location,remote, sort)).thenReturn(List.of(job1));
+        when(jobRepository.search(keyword, location, remote, pageable))
+                .thenReturn(new PageImpl<>(List.of(job1), pageable, 1));
 
-        List<JobDto> result = jobService.searchJobs(keyword,location,remote,sort);
+        Page<JobDto> result = jobService.searchJobs(keyword, location, remote, pageable);
 
-        assertEquals("java", result.get(0).getTitle());
-        assertEquals("Prague", result.get(0).getLocation());
-        assertFalse(result.get(0).isRemote());
+        JobDto dto = result.getContent().get(0);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("java", dto.getTitle());
+        assertEquals("Prague", dto.getLocation());
+        assertFalse(dto.isRemote());
     }
-
 }
