@@ -14,9 +14,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
+    private final JwtAuthenticationEntryPoint entryPoint;
 
-    public SecurityConfig(JwtFilter jwtFilter) {
+    public SecurityConfig(JwtFilter jwtFilter, JwtAuthenticationEntryPoint entryPoint) {
         this.jwtFilter = jwtFilter;
+        this.entryPoint = entryPoint;
     }
 
     @Bean
@@ -32,6 +34,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
 
                 )
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
 
