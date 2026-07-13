@@ -1,4 +1,4 @@
-package com.artur.jobaggregator;
+package com.artur.jobaggregator.mapper;
 
 import com.artur.jobaggregator.dto.JobDto;
 import com.artur.jobaggregator.dto.api.ArbeitnowResult;
@@ -14,6 +14,7 @@ public class JobMapper {
     public JobDto mapToJobDto(JobEntity jobEntity) {
         JobDto job = new JobDto();
 
+        job.setId(jobEntity.getId());
         job.setTitle(jobEntity.getTitle());
         job.setDescription(jobEntity.getDescription());
         job.setRemote(jobEntity.isRemote());

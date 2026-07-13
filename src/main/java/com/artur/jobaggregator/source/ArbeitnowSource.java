@@ -1,10 +1,10 @@
 package com.artur.jobaggregator.source;
 
-import com.artur.jobaggregator.JobMapper;
+import com.artur.jobaggregator.mapper.JobMapper;
 import com.artur.jobaggregator.dto.api.ArbeitnowResponse;
 import com.artur.jobaggregator.dto.api.ArbeitnowResult;
 import com.artur.jobaggregator.entity.JobEntity;
-import com.artur.jobaggregator.exception.externalservice.ArbeitnowResponseEmpyException;
+import com.artur.jobaggregator.exception.externalservice.ArbeitnowResponseEmptyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class ArbeitnowSource implements JobSource {
                 .body(ArbeitnowResponse.class);
 
         if (response == null || response.getData() == null) {
-            throw new ArbeitnowResponseEmpyException("Arbeitnow response contains no data");
+            throw new ArbeitnowResponseEmptyException("Arbeitnow response contains no data");
         }
         logger.info("ArbeitnowAPI responded successfully");
         for(ArbeitnowResult job: response.getData()) {

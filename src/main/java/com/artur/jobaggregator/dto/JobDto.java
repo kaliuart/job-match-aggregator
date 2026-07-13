@@ -7,6 +7,8 @@ import java.util.List;
 @Data
 public class JobDto {
 
+    private Long id;
+
     private List<String> tags;
 
     private String title;

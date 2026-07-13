@@ -4,6 +4,7 @@ import com.artur.jobaggregator.dto.JobDto;
 import com.artur.jobaggregator.dto.api.ArbeitnowResult;
 import com.artur.jobaggregator.dto.api.MuseResult;
 import com.artur.jobaggregator.entity.JobEntity;
+import com.artur.jobaggregator.mapper.JobMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;

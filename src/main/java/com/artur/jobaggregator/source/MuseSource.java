@@ -1,6 +1,6 @@
 package com.artur.jobaggregator.source;
 
-import com.artur.jobaggregator.JobMapper;
+import com.artur.jobaggregator.mapper.JobMapper;
 import com.artur.jobaggregator.dto.api.MuseResponse;
 import com.artur.jobaggregator.dto.api.MuseResult;
 import com.artur.jobaggregator.entity.JobEntity;

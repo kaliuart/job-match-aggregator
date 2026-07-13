@@ -1,4 +1,5 @@
-package com.artur.jobaggregator;
+package com.artur.jobaggregator.exception;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import com.artur.jobaggregator.dto.ErrorResponseDto;
 import com.artur.jobaggregator.exception.badrequest.BadRequestException;
@@ -20,6 +21,21 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseDto> handleAll(Exception e, HttpServletRequest request) {
+        logger.error("Unhandled exception on {}", request.getRequestURI(), e);
+        ErrorResponseDto error = new ErrorResponseDto(
+                "internal error",
+                "Something went wrong",
+                LocalDateTime.now(),
+                500,
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponseDto> handleConflictException(ConflictException e, HttpServletRequest request) {
@@ -98,4 +114,19 @@ public class GlobalExceptionHandler {
         logger.error("Handle {}", e.getClass().getName());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseDto> handleNotReadable(HttpMessageNotReadableException e, HttpServletRequest request) {
+        ErrorResponseDto error = new ErrorResponseDto(
+                "malformed request",
+                "Request body is not valid JSON",
+                LocalDateTime.now(),
+                400,
+                request.getRequestURI()
+        );
+        logger.warn("Malformed JSON on {}", request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+
 }

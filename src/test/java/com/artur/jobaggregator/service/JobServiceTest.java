@@ -1,6 +1,6 @@
 package com.artur.jobaggregator.service;
 
-import com.artur.jobaggregator.JobMapper;
+import com.artur.jobaggregator.mapper.JobMapper;
 import com.artur.jobaggregator.dto.JobDto;
 import com.artur.jobaggregator.entity.JobEntity;
 import com.artur.jobaggregator.exception.notfound.JobNotFoundException;

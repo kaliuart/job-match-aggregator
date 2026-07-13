@@ -1,4 +1,4 @@
-package com.artur.jobaggregator;
+package com.artur.jobaggregator.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
