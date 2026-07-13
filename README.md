@@ -8,12 +8,6 @@ Instead of reading a hundred vacancies to find the three that fit you, you send 
 
 ---
 
-## Screenshot
-
-![Swagger UI](docs/swagger.png)
-
----
-
 ## How it works
 
 **Aggregation.** A scheduled task runs every 6 hours and pulls vacancies from **The Muse API** and **Arbeitnow API**. Posts are filtered by IT keywords (configurable in `application.yaml`) and deduplicated by `slug`, so re-running the task updates existing rows instead of creating copies.
